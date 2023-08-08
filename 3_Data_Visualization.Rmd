@@ -178,21 +178,20 @@ covid_wv.line +
 #| label: histogram
 #| eval: false
 
-# create an new data frame
 
-customer_df <- customer_replaceNA |> 
-  drop_na()
+reviews.hist <- reviews_df |> 
+  drop_na(Department_Name)
 
 # create a histogram
 
-customer.hist <- ggplot(customer_df, aes(Age))
+reviews.hist <- ggplot(reviews.hist, aes(Age))
 
-customer.hist +
+reviews.hist +
   geom_histogram()
 
 # bin and add some color
 
-customer.hist +
+reviews.hist +
   geom_histogram(bins = 30, color = "coral", fill = "#ffbf00", alpha = .5)
 
 
@@ -213,7 +212,7 @@ the **theme** element allows you adjust additional aspects of your plot. In this
 
 # using the theme options
 
-customer.hist +
+reviews.hist +
   geom_histogram(bins = 30, color = "coral", fill = "#ffbf00", alpha = .5) +
   theme_light() +
   theme(axis.text = element_text(size = 4), axis.title = element_text(color = "#097969", size = 14)) +
@@ -235,7 +234,7 @@ customer.hist +
 
 # add a reference line
 
-customer.hist +
+reviews.hist +
   geom_vline(xintercept = 55, color = "#afe1af", size = 5) +
   geom_histogram(bins = 30, color = "coral", fill = "#ffbf00", alpha = .9) +
   theme_light() +
@@ -260,7 +259,7 @@ customer.hist +
 
 # separate by categorical data with facets
 
-customer.hist +
+reviews.hist +
   geom_histogram(bins = 30, color = "coral", fill = "#ffbf00", alpha = .9) +
   theme_light() +
   theme(axis.text = element_text(size = 4), axis.title = element_text(color = "#097969", size = 14)) +
@@ -281,44 +280,30 @@ customer.hist +
 #| label: bar graph
 #| eval: false
 
-customer_afinn <- customer_sentiment |> 
-  group_by(word) |> 
-  summarise(n = sum(n), afinn_value = sum(afinn_value))
 
+demographics_df <- demographics_df |> 
+  mutate(inccat = as_factor(inccat)) |> 
+  mutate(ed = as_factor(ed)) |> 
+  mutate(carcat = as_factor(carcat))
 
-arrange(customer_afinn, desc(afinn_value))
-
-
-customer_afinn <- customer_afinn |> 
-  filter(afinn_value <= -600 | afinn_value >= 6000) |> 
-  inner_join(bing)
-
-customer_afinn
 
 # you can order the bar graph using the fct_reorder function from Forcats
 
-customer.bar <- ggplot(customer_afinn, aes(fct_reorder(word, afinn_value), afinn_value))
+demographics.col <- ggplot(demographics_df, aes(fct_reorder(carcat, income), income))
 
 # you can color plots by categorical variables using the fill or color option followed by the variables name in the aes() argument
 
-customer.bar + 
-  geom_col(aes(fill = sentiment)) +
-  coord_flip() +
-  theme_minimal() +
+demographics.col +
+  geom_col(aes(fill = ed)) +
+  theme_minimal()  +
   scale_fill_brewer(palette = "Paired")
 
 # difference between geom_bar and geom_col
 
-customer_df
+demographics.bar <- ggplot(demographics_df, aes(inccat))
 
-customer.bar2 <- ggplot(customer_df, aes(Department_Name))
-
-customer.bar2 +
-  geom_bar()
-
-customer.bar3 <- ggplot(customer_df, aes(Department_Name, Rating))
-
-customer.bar3 +
-  geom_col()
+demographics.bar + 
+  geom_bar() +
+  theme_minimal()
 
 ```

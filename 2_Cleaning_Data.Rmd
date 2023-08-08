@@ -537,11 +537,11 @@ covid19_date
 
 ## we can even use this to create new variables
 
-covid19_month <- covid19_date |> 
+covid19_df <- covid19_date |> 
   mutate(Month = lubridate::month(Date, label = TRUE, abbr = FALSE)) |> 
   relocate(Month, .after = Date)
 
-covid19_month
+covid19_df
 
 
 ```

@@ -753,43 +753,7 @@ customer_replaceNA
 
 <br />
 
-
-
 ------------------------------------------------------------------------
-
-# Part 5: Text Mining 
-
-**Tidytext** provides functions for performing text mining in r.
-
-```{r}
-#| label: install and load tidytext
-#| eval: false
-
-install.packages("tidytext")
-
-library(tidytext)
-
-
-```
-
-<br />
-
-```{r}
-#| label: load and filter customer data frame
-#| eval: false
-
-customer_reviews <- customer_reviews_load |> 
-  select(Clothing_ID, Title, Review_Text, Division_Name, Department_Name, Class_Name) |>
-  mutate(Title = replace_na(Title, "none given"))
-  
-
-customer_reviews
-
-
-```
-
-<br />
---- 
 
 # Part 5: Data Explorer Package
 

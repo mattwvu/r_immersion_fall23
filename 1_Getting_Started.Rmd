@@ -172,7 +172,7 @@ the setwd() function*
 #| label: setwd function
 #| eval: false
 
-setwd("C:/Users/Matt/Documents/RWorkshop Development/workshop_r_for_marketing")
+setwd("~/GitHub/r_immersion_fall23")
 
 ```
 
@@ -764,7 +764,7 @@ load data from a file in your working directory using the **read_csv( )** functi
 #| label: read data
 #| eval: false
 
-fight_songs <- read_csv("fight-songs.csv")
+reviews_df <- read_csv("customer_reviews.csv")
 
 ```
 
@@ -786,7 +786,7 @@ view the full data frame
 #| label: view
 #| eval: false
 
-view(fight_songs)
+view(reviews_df)
 ```
 
 <br>
@@ -797,9 +797,11 @@ view the number of rows/observations
 
 <br>
 
-```{r nrow, eval =FALSE}
+```{r}
+#| label: nrow
+#| eval: false
 
-    nrow(fight_songs)
+    nrow(reviews_df)
 
 ```
 
@@ -811,10 +813,12 @@ view the number of columns/variables
 
 <br>
     
-```{r ncol, eval=FALSE}
+```{r}
+#| label: ncol
+#| eval: false
 
 
-  ncol(fight_songs)
+  ncol(reviews_df)
 
 ```
   
@@ -824,9 +828,11 @@ view the names of columns/variables
 
 <br>
     
-```{r colnames, eval=FALSE}
+```{r}
+#| label: colnames
+#| eval: false
 
-  colnames(fight_songs)
+  colnames(reviews_df)
 
 ```
 
@@ -836,9 +842,11 @@ view the structure of data
 
 <br>
     
-```{r structure, eval=FALSE}
+```{r}
+#| label: structure
+#| eval: false
 
-  str(fight_songs)
+  str(reviews_df)
 
 ```
 
@@ -848,10 +856,12 @@ basic descriptive statistics
 
 <br>
     
-```{r summary, eval=FALSE}
+```{r}
+#| label: summary statistics
+#| eval: false
 
 
-  summary(fight_songs)
+  summary(reviews_df)
 
 ```
 
@@ -861,9 +871,21 @@ individual descriptive statistics
 
 <br>
   
-```{r descriptive statistics, eval=FALSE}
+```{r}
+#| label: descriptive statistics
+#| eval: false
 
-sum(fight_songs$number_fights)
+# how people would recommend items from this store
+
+sum(reviews_df$Recommended_IND)
+
+# what is the average rating of items from the store
+
+mean(reviews_df$Rating)
+
+# what is the median number of positive feedback for items from the store
+
+median(reviews_df$Positive_Feedback_Count)
 
 ```
 
@@ -876,7 +898,7 @@ view top and bottom of data
 ```{r head and tail, eval=FALSE}
 
 
-  head(fight_songs)
+  head(reviews_df)
 
 ```
 

@@ -28,7 +28,7 @@ output:
 #| label: working directory
 #| include: false
 
-setwd("C:/Users/Matt/Documents/RWorkshop Development/workshop_r_immersion")
+setwd("~/GitHub/r_immersion_fall23")
 
 
 ```
@@ -106,7 +106,7 @@ this function allows you to read a csv file into a tibble data frame
 #| label: read_csv function
 #| eval: false
 
-customer_reviews_load <- read_csv("customer_reviews.csv")
+reviews_df <- read_csv("customer_reviews.csv")
 
 ```
 
@@ -123,7 +123,7 @@ frame.
 #| label: view function
 #| eval: false
 
-view(customer_reviews)
+view(reviews_df)
 
 ```
 
@@ -143,15 +143,15 @@ object based on an order of operations
 #| label: pipe operator example
 #| eval: false
 
-view(customer_reviews_load)
+view(reviews_df)
 
-customer_reviews_load |> # object we are working on
+reviews_df |> # object we are working on
   filter(Department_Name == "Dresses") |> # first operation
   select(Clothing_ID, Age, Rating, Positive_Feedback_Count) # second operation
 
 # order of operations matter
 
-customer_reviews_load |> # object we are working on
+reviews_df |> # object we are working on
   select(Clothing_ID, Age, Rating, Positive_Feedback_Count) |> # first operation
   filter(Department_Name == "Dresses") # second operation
 
@@ -227,7 +227,7 @@ for SPSS, SAS, and STATA
 #| eval: false
 
 
-demographics_load <- haven::read_sav("demographics.sav")
+demographics_df <- haven::read_sav("demographics.sav")
 
 ```
 
@@ -242,7 +242,7 @@ your data but in a more compact manner
 #| label: glimpse function
 #| eval: false
 
-glimpse(demographics_load)
+glimpse(demographics_df)
 
 ```
 
@@ -277,14 +277,14 @@ observations in a variable
 #| label: filter function
 #| eval: false
 
-customer_reviews_load
+reviews_df
 
 # let's filter the data frame so we are seeing people who bought pants
 
-customer_pants <- customer_reviews_load |> 
+reviews_pants <- reviews_df |> 
   filter(Class_Name == "Pants")
 
-customer_pants
+reviews_pants
 
 ```
 
@@ -315,10 +315,10 @@ boolean operators allows you to build criteria in your code
 
 # let's filter the data frame for people who did not buy pants and are over 50 years old
 
-customer_pants50 <- customer_reviews_load |> 
+reviews_pants50 <- reviews_df |> 
   filter(Class_Name != "Pants" & Age > 50)
 
-customer_pants50
+reviews_pants50
 
 ```
 
@@ -336,17 +336,17 @@ the select function allows you to *keep* or *discard* variables
 
 # let's just keep the numeric information
 
-customer_select <- customer_pants50 |> 
+reviews_select <- reviews_df |> 
   select(Clothing_ID, Age, Rating, Recommended_IND)
 
-customer_select
+reviews_select
 
 # let's remove the division and department name variables from our data frame
 
-customer_notSelect <- customer_pants50 |> 
+reviews_notSelect <- reviews_pants50 |> 
   select(-Division_Name, -Department_Name)
 
-customer_notSelect
+reviews_notSelect
 
 ```
 
@@ -365,9 +365,9 @@ variables based on the observations in the variables
 #| label: mutate function
 #| eval: false
 
-demographics_load
+demographics_df
 
-demographics_mutate <- demographics_load |> 
+demographics_mutate <- demographics_df |> 
   mutate(income_new = income/1000) |> 
   relocate(income_new, .after = income)
 
@@ -375,7 +375,7 @@ demographics_mutate
 
 # let's overwrite the old variable
 
-demographics_overwrite <- demographics_load |> 
+demographics_overwrite <- demographics_df |> 
   mutate(income = income/1000)
 
 demographics_overwrite
@@ -396,12 +396,12 @@ the arrange function allows you to sort variables
 
 # let's look in the customers review data frame and see what customers gave the highest rating
 
-customer_reviews_load |> 
+reviews_df |> 
   arrange(desc(Rating))
 
 # you can add multiple criteria to your sort
 
-customer_reviews_load |> 
+reviews_df |> 
   arrange(desc(Rating), Class_Name) |> 
   select(Clothing_ID, Rating, Class_Name)
 
@@ -419,15 +419,15 @@ the **group_by** function allows you to group common observations in a variable 
 #| label: group_by and summarise
 #| eval: false
 
-customers_group <- customer_reviews_load |> 
+reviews_group <- reviews_df |> 
   group_by(Class_Name) |> 
   summarise(n = n())
 
-customers_group
+reviews_group
 
 # you can add as many summaries as you want
 
-customers_group <- customer_reviews_load |> 
+reviews_group <- reviews_df |> 
   group_by(Class_Name) |> 
   summarise(n = n(), 
             positive_tot = sum(Positive_Feedback_Count), 
@@ -437,7 +437,7 @@ customers_group <- customer_reviews_load |>
 
 # you can also add multiple groups
 
-customers_group <- customer_reviews_load |> 
+reviews_group <- reviews_df |> 
   group_by(Class_Name, Recommended_IND) |> 
   summarise(n = n(), 
             positive_tot = sum(Positive_Feedback_Count), 
@@ -604,10 +604,12 @@ This function allows you to redefine a variable value as a factor using the **mu
 #| label: recode factors
 #| eval: false
 
-is.factor(customers_group)
+is.factor(reviews_group$Recommended_IND)
 
-customers_factor <- customers_group |> 
+reviews_group <- reviews_group |> 
   mutate(Recommended_IND = as_factor(Recommended_IND))
+
+reviews_group
 
 ```
 
@@ -629,17 +631,17 @@ we can rename the values of observations within a variable using the **mutate** 
 
 
 
-levels(customers_factor$Recommended_IND)
+levels(reviews_group$Recommended_IND)
 
 # let's change the values from 1/0 to yes/no
 
-customers_recode <- customers_factor |> 
+reviews_recode <- reviews_group |> 
   mutate(Recommended_IND = recode_factor(Recommended_IND, 
                                          "1" = "Yes", 
                                          "0" = "No"))
 
 
-customers_recode
+reviews_recode
 
 ```
 
@@ -656,13 +658,13 @@ we can also do the inverse of pivot longer and widen our data
 #| eval: false
 
 
-# let's create new variables from the recommend varaible
+# let's create new variables from the recommend variable
 
-customers_wide <- customers_recode |> 
+reviews_wide <- reviews_recode |> 
   pivot_wider(names_from = Recommended_IND, values_from = c(n:rating))
 
 
-customers_wide
+reviews_wide
 
 ```
 
@@ -679,12 +681,12 @@ the rename function allows you rename variables in your data frame
 #| label: rename
 #| eval: false
 
-glimpse(customers_wide)
+glimpse(reviews_wide)
 
-customers_rename <- customers_wide |> 
-  rename("Total Not Recommended" = n_No, "Total Recommended" = n_Yes)
+reviews_wide <- reviews_wide |> 
+  rename("Not_Recommend" = n_No, "Recommend" = n_Yes)
 
-customers_rename
+reviews_wide
 
 
 ```
@@ -702,28 +704,32 @@ we can remove **all** missing data from data frames or variables using the drop_
 #| label: drop na
 #| eval: false
 
-customers_rename
+reviews_wide
 
 # we can see if are data frame has missing NA values using the is.na function.
 
-is.na(customers_rename)
-which(is.na(customers_rename))
+is.na(reviews_wide)
+which(is.na(reviews_wide))
 
 # because there are missing values we cannot calculate some descriptive statistics
 
-mean(customers_rename$`Total Not Recommended`)
+mean(reviews_wide$Not_Recommend)
 
 # we can drop all NA values from the data frame
 
-customers_dropNA <- customers_rename |> 
+reviews_dropNA <- reviews_wide |> 
   drop_na()
 
-customers_dropNA
+reviews_dropNA
+
+mean(reviews_dropNA$Not_Recommend)
 
 # we can also just drop NAs from a variable
 
-customers_dropNA_var <- customers_rename |> 
-  drop_na(`Total Not Recommended`)
+reviews_dropNA_var <- reviews_wide |> 
+  drop_na(Not_Recommend)
+
+reviews_dropNA_var
 
 ```
 
@@ -740,14 +746,16 @@ you can also recode the NA values for observations with the replace_na function
 #| label: replace_na
 #| eval: false
 
-customer_reviews_load 
+reviews_wide 
 
 # let's replace the NAs in the title of the review given with "none given"
 
-customer_replaceNA <- customer_reviews_load |> 
-  mutate(Title = replace_na(Title, "none given"))
+reviews_replaceNA <- reviews_wide |> 
+  mutate(Not_Recommend = replace_na(Not_Recommend, 0))
 
-customer_replaceNA
+reviews_replaceNA
+
+mean(reviews_replaceNA$Not_Recommend)
 
 ```
 
